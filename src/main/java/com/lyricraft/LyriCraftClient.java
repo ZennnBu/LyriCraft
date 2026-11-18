@@ -3,6 +3,7 @@ package com.lyricraft;
 
 import com.lyricraft.audio.MusicController;
 import com.lyricraft.audio.MusicKeybinds;
+import com.lyricraft.audio.MusicHud;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -50,6 +51,7 @@ public class LyriCraftClient implements ClientModInitializer {
             MUSIC_CONTROLLER.refreshSongs();
 
             MusicKeybinds.register();
+            MusicHud.register();
 
             LOGGER.info("LyriCraft initialized successfully!");
             LOGGER.info("Music folder: {}", SONGS_DIRECTORY);
