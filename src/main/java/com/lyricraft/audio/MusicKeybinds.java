@@ -24,6 +24,7 @@ public class MusicKeybinds {
     private static KeyMapping playPauseKey;
     private static KeyMapping nextSongKey;
     private static KeyMapping previousSongKey;
+    private static KeyMapping openMusicKey;
 
     public static void register() {
 
@@ -54,6 +55,15 @@ public class MusicKeybinds {
                 )
         );
 
+        openMusicKey = KeyMappingHelper.registerKeyMapping(
+                new KeyMapping(
+                        "key.lyricraft.open_music",
+                        InputConstants.Type.KEYSYM,
+                        InputConstants.KEY_M,
+                        CATEGORY
+                )
+        );
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
             if (LyriCraftClient.MUSIC_CONTROLLER == null) {
@@ -70,6 +80,10 @@ public class MusicKeybinds {
 
             while (previousSongKey.consumeClick()) {
                 LyriCraftClient.MUSIC_CONTROLLER.playPrevious();
+            }
+
+            while (openMusicKey.consumeClick()) {
+                client.gui.setScreen(new MusicScreen());
             }
         });
     }
