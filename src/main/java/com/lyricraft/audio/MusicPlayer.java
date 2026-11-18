@@ -5,6 +5,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -29,6 +30,18 @@ public class MusicPlayer {
                      AudioSystem.getAudioInputStream(song.toFile())) {
 
             clip = AudioSystem.getClip();
+
+            clip.addLineListener(event -> {
+                if (event.getType() == LineEvent.Type.STOP) {
+                    if (clip != null
+                            && !paused
+                            && clip.getMicrosecondPosition()
+                            >= clip.getMicrosecondLength()) {
+                        pausePosition = 0;
+                    }
+                }
+            });
+
             clip.open(audio);
         }
 
@@ -42,20 +55,16 @@ public class MusicPlayer {
     public void pause() {
 
         if (clip != null && clip.isRunning()) {
-
             pausePosition = clip.getMicrosecondPosition();
-
-            clip.stop();
             paused = true;
+            clip.stop();
         }
     }
 
     public void resume() {
 
         if (clip != null && paused) {
-
             clip.setMicrosecondPosition(pausePosition);
-
             paused = false;
             clip.start();
         }
@@ -69,15 +78,17 @@ public class MusicPlayer {
 
         if (clip.isRunning()) {
             pause();
-        } else {
+        } else if (paused) {
             resume();
+        } else if (pausePosition == 0) {
+            clip.setMicrosecondPosition(0);
+            clip.start();
         }
     }
 
     public void stop() {
 
         if (clip != null) {
-
             clip.stop();
             clip.close();
             clip = null;
@@ -90,7 +101,6 @@ public class MusicPlayer {
     public void setVolume(float value) {
 
         volume = Math.max(0.0f, Math.min(1.0f, value));
-
         applyVolume();
     }
 
