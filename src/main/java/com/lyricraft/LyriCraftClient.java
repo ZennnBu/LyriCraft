@@ -1,6 +1,8 @@
 
 package com.lyricraft;
 
+import com.lyricraft.audio.MusicController;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -22,6 +24,8 @@ public class LyriCraftClient implements ClientModInitializer {
     public static Path SONGS_DIRECTORY;
     public static Path LYRICS_DIRECTORY;
 
+    public static MusicController MUSIC_CONTROLLER;
+
     @Override
     public void onInitializeClient() {
 
@@ -41,16 +45,17 @@ public class LyriCraftClient implements ClientModInitializer {
             Files.createDirectories(SONGS_DIRECTORY);
             Files.createDirectories(LYRICS_DIRECTORY);
 
+            MUSIC_CONTROLLER = new MusicController();
+            MUSIC_CONTROLLER.refreshSongs();
+
             LOGGER.info("LyriCraft initialized successfully!");
-
             LOGGER.info("Music folder: {}", SONGS_DIRECTORY);
-
             LOGGER.info("Lyrics folder: {}", LYRICS_DIRECTORY);
 
         } catch (IOException exception) {
 
             LOGGER.error(
-                    "Failed to create LyriCraft folders!",
+                    "Failed to initialize LyriCraft folders!",
                     exception
             );
         }
